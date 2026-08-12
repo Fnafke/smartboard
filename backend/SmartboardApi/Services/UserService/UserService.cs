@@ -1,6 +1,9 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using SmartboardApi.Controllers.DTO;
 using SmartboardApi.Models;
 using SmartboardApi.Repositories.UserRepository;
+using SmartboardApi.Services.TokenService;
+using System.Security.Authentication;
 using BC = BCrypt.Net.BCrypt;
 
 namespace SmartboardApi.Services.UserService
@@ -8,8 +11,12 @@ namespace SmartboardApi.Services.UserService
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly ITokenService _tokenService;
 
-        public UserService(IUserRepository userRepository) { _userRepository = userRepository; }
+        public UserService(IUserRepository userRepository, ITokenService tokenService) { 
+            _userRepository = userRepository; 
+            _tokenService = tokenService;
+        }
 
         public async Task<Boolean> UserExistsByEmailAsync(string email)
         {
@@ -39,9 +46,9 @@ namespace SmartboardApi.Services.UserService
 
         public async Task<User> CreateUserAsync(string username, string email, string password)
         {
-            if (username.IsNullOrEmpty()) throw new ArgumentNullException("Username should not be empty");
-            if (email.IsNullOrEmpty()) throw new ArgumentNullException("Email should not be empty.");
-            if (password.IsNullOrEmpty()) throw new ArgumentNullException("Password should not be empty.");
+            if (string.IsNullOrEmpty(username)) throw new ArgumentNullException("Username should not be empty");
+            if (string.IsNullOrEmpty(email)) throw new ArgumentNullException("Email should not be empty.");
+            if (string.IsNullOrEmpty(password)) throw new ArgumentNullException("Password should not be empty.");
 
             if (await UserExistsByUsernameAsync(username))
             {
@@ -58,6 +65,19 @@ namespace SmartboardApi.Services.UserService
             User user = new User(username, email, passwordHash);
 
             return await _userRepository.CreateUserAsync(user);
+        }
+
+        public async Task<AuthenticationResponse> AuthenticateUser(string username, string password)
+        {
+            User? user = await _userRepository.GetUserByUsernameAsync(username);
+
+            if (user == null) throw new AuthenticationException("Username or password is incorrect.");
+            if (!BC.Verify(password, user.Password)) throw new AuthenticationException("Username or password is incorrect.");
+
+            string token = _tokenService.GenerateToken(user);
+
+            return new AuthenticationResponse(token, user.Username);
+
         }
     }
 }

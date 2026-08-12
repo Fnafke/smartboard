@@ -1,4 +1,5 @@
-﻿using SmartboardApi.Models;
+﻿using SmartboardApi.Controllers.DTO;
+using SmartboardApi.Models;
 
 namespace SmartboardApi.Services.UserService
 {
@@ -8,5 +9,6 @@ namespace SmartboardApi.Services.UserService
         Task<Boolean> UserExistsByUsernameAsync(string username);
         Task<User> GetUserByIdAsync(Guid id);
         Task<User> CreateUserAsync(string username, string email, string password);
+        Task<AuthenticationResponse> AuthenticateUser(string username, string password);
     }
 }

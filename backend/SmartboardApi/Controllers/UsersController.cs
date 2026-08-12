@@ -1,7 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartboardApi.Controllers.DTO;
 using SmartboardApi.Models;
+using SmartboardApi.Services.TokenService;
 using SmartboardApi.Services.UserService;
+using System.Security.Authentication;
 
 
 [ApiController]
@@ -15,7 +18,7 @@ public class UsersController : ControllerBase
         _userService = userService;
     }
 
-
+    [Authorize]
     [HttpGet("{id:guid}", Name = "GetUserByIdAsync")]
     public async Task<ActionResult<UserDTO>> GetUserByIdAsync(Guid id)
     {
@@ -33,19 +36,34 @@ public class UsersController : ControllerBase
         }
     }
 
-    [HttpPost]
-    public async Task<ActionResult<UserDTO>> CreateUserAsync(CreateUserDTO dto)
+    [HttpPost("register")]
+    public async Task<ActionResult<AuthenticationResponse>> CreateUserAsync(CreateUserDTO dto)
     {
         try
         {
             User user = await _userService.CreateUserAsync(dto.Username, dto.Email, dto.Password);
 
-            UserDTO response = new UserDTO(user.Id, user.Username, user.Email, user.CreatedAt);
+            AuthenticationResponse response = await _userService.AuthenticateUser(dto.Username, dto.Password);
 
-            return CreatedAtRoute(nameof(GetUserByIdAsync), new {id = response.Id}, response);
+            return CreatedAtRoute(nameof(GetUserByIdAsync), new { id = user.Id }, response);
+        } catch (AuthenticationException ex)
+        {
+            return Unauthorized(ex.Message);
         } catch(Exception ex)
         {
             return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPost("login")]
+    public async Task<ActionResult<AuthenticationResponse>> Login(AuthenticationRequest dto)
+    {
+        try
+        {
+            return Ok(await _userService.AuthenticateUser(dto.Username, dto.Password));
+        } catch (AuthenticationException ex)
+        {
+            return Unauthorized(ex);
         }
     }
 }
