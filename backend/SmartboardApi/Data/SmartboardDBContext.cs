@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using SmartboardApi.Models;
 
-namespace SmartboardApi.Models;
+namespace SmartboardApi.Data;
 
 public class SmartboardDBContext : DbContext
 {
@@ -8,5 +9,5 @@ public class SmartboardDBContext : DbContext
     {
     }
 
-    public DbSet<User> Users { get; set; } = null!;
+    public DbSet<User> Users { get; set; }
 }
