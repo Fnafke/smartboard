@@ -1,0 +1,6 @@
+@SmartboardApi_HostAddress = http://localhost:5003
+
+GET {{SmartboardApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
