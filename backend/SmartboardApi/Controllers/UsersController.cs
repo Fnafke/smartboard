@@ -1,3 +1,4 @@
+using Azure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartboardApi.Controllers.DTO;
@@ -45,6 +46,14 @@ public class UsersController : ControllerBase
 
             AuthenticationResponse response = await _userService.AuthenticateUser(dto.Username, dto.Password);
 
+            Response.Cookies.Append("loggedInUser", response.Token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddHours(8)
+            });
+
             return CreatedAtRoute(nameof(GetUserByIdAsync), new { id = user.Id }, response);
         } catch (AuthenticationException ex)
         {
@@ -60,7 +69,17 @@ public class UsersController : ControllerBase
     {
         try
         {
-            return Ok(await _userService.AuthenticateUser(dto.Username, dto.Password));
+            AuthenticationResponse authResponse = await _userService.AuthenticateUser(dto.Username, dto.Password);
+
+            Response.Cookies.Append("loggedInUser", authResponse.Token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddHours(8)
+            });
+
+            return Ok(authResponse);
         } catch (AuthenticationException ex)
         {
             return Unauthorized(ex);
