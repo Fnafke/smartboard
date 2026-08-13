@@ -6,6 +6,7 @@ using SmartboardApi.Models;
 using SmartboardApi.Services.TokenService;
 using SmartboardApi.Services.UserService;
 using System.Security.Authentication;
+using System.Security.Claims;
 
 
 [ApiController]
@@ -18,6 +19,8 @@ public class UsersController : ControllerBase
     {
         _userService = userService;
     }
+
+    // GET ENDPOINTS
 
     [Authorize]
     [HttpGet("{id:guid}", Name = "GetUserByIdAsync")]
@@ -36,6 +39,29 @@ public class UsersController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+
+    [Authorize]
+    [HttpGet("me")]
+    public async Task<ActionResult<UserDTO>> GetCurrentUserAsync()
+    {
+        try
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var username = User.FindFirstValue(ClaimTypes.Name);
+
+            if (userId == null || username == null)
+            {
+                throw new AuthenticationException("Token is invalid.");
+            }
+
+            return Ok(new CurrentUserDto(Guid.Parse(userId), username));
+        } catch (Exception ex)
+        {
+            return Unauthorized(ex);
+        }
+    }
+
+    // POST ENDPOINTS
 
     [HttpPost("register")]
     public async Task<ActionResult<AuthenticationResponse>> CreateUserAsync(CreateUserDTO dto)
