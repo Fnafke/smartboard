@@ -1,10 +1,13 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { LockKeyhole, Mail } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Link, useNavigate } from "react-router-dom"
 import { UserService } from "@/services/UserService"
+import { AuthContext } from "../context/AuthContext"
+import type { User } from "@/types/types"
+import { Spinner } from "../ui/spinner"
 
 const SignupForm = () => {
     const [username, setUsername] = useState("")
@@ -14,8 +17,11 @@ const SignupForm = () => {
     const [passwordError, setPasswordError] = useState("")
     const [usernameError, setUsernameError] = useState("")
     const [authenticationError, setAuthenticationError] = useState("")
+    const [successMessage, setSuccessMessage] = useState("")
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     const navigate = useNavigate();
+    const context = useContext(AuthContext);
 
     const validateCredentials = () => {
         let isValid = true;
@@ -47,14 +53,32 @@ const SignupForm = () => {
 
         if (!validateCredentials()) return;
 
-        const response = await UserService.signupUser(username, email, password);
+        setIsSubmitting(true);
 
-        if (!response.ok) {
-            setAuthenticationError("Failed to create account.");
-            return;
+        try {
+            const response = await UserService.signupUser(username, email, password);
+
+            if (!response.ok) {
+                setAuthenticationError("Failed to create account.");
+                return;
+            }
+
+            // cookie is now set — fetch the user profile and push it into context
+            const meResponse = await UserService.fetchCurrentUser();
+
+            if (!meResponse.ok) {
+                setAuthenticationError("Logged in, but couldn't load your profile.");
+                return;
+            }
+
+            const userData = await meResponse.json();
+            context?.login && context.login(userData);
+
+            setSuccessMessage("Account created successfully! Redirecting...");
+            navigate("/");
+        } finally {
+            setIsSubmitting(false);
         }
-        
-        navigate("/");
     }
 
     return (
@@ -81,6 +105,7 @@ const SignupForm = () => {
                     onChange={(event) => setUsername(event.target.value)}
                     placeholder="Enter your username"
                     className="h-11 pl-9"
+                    disabled={isSubmitting}
                 />
                 </div>
             </div>
@@ -98,6 +123,7 @@ const SignupForm = () => {
                     placeholder="you@example.com"
                     className="h-11 pl-9"
                     autoComplete="email"
+                    disabled={isSubmitting}
                 />
                 </div>
             </div>
@@ -116,6 +142,7 @@ const SignupForm = () => {
                 placeholder="Enter your password"
                 className="h-11"
                 autoComplete="current-password"
+                disabled={isSubmitting}
                 />
             </div>
 
@@ -130,14 +157,15 @@ const SignupForm = () => {
                 </label>
             </div> */}
 
-            <Button type="submit" className="h-11 w-full rounded-2xl text-sm font-medium">
-                Sign up
+            <Button type="submit" className="h-11 w-full rounded-2xl text-sm font-medium" disabled={isSubmitting}>
+                {isSubmitting ? <Spinner className="size-4" /> : "Sign up"}
             </Button>
 
             {usernameError && <p className="text-sm text-red-500">{usernameError}</p>}
             {emailError && <p className="text-sm text-red-500">{emailError}</p>}
             {passwordError && <p className="text-sm text-red-500">{passwordError}</p>}
             {authenticationError && <p className="text-sm text-red-500">{authenticationError}</p>}
+            {successMessage && <p className="text-sm text-green-500">{successMessage}</p>}
             </form>
 
             <p className="mt-6 text-center text-sm text-muted-foreground">
