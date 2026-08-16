@@ -63,7 +63,7 @@ public class UsersController : ControllerBase
 
     // POST ENDPOINTS
 
-    [HttpPost("register")]
+    [HttpPost("signup")]
     public async Task<ActionResult<AuthenticationResponse>> CreateUserAsync(CreateUserDTO dto)
     {
         try
