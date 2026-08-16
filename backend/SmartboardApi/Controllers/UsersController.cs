@@ -111,4 +111,18 @@ public class UsersController : ControllerBase
             return Unauthorized(ex);
         }
     }
+
+    [Authorize]
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        Response.Cookies.Delete("loggedInUser", new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict
+        });
+
+        return Ok();
+    }
 }
