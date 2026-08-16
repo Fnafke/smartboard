@@ -70,7 +70,7 @@ public class UsersController : ControllerBase
         {
             User user = await _userService.CreateUserAsync(dto.Username, dto.Email, dto.Password);
 
-            AuthenticationResponse response = await _userService.AuthenticateUser(dto.Username, dto.Password);
+            AuthenticationResponse response = await _userService.AuthenticateUser(dto.Email, dto.Password);
 
             Response.Cookies.Append("loggedInUser", response.Token, new CookieOptions
             {
