@@ -67,12 +67,12 @@ namespace SmartboardApi.Services.UserService
             return await _userRepository.CreateUserAsync(user);
         }
 
-        public async Task<AuthenticationResponse> AuthenticateUser(string username, string password)
+        public async Task<AuthenticationResponse> AuthenticateUser(string email, string password)
         {
-            User? user = await _userRepository.GetUserByUsernameAsync(username);
+            User? user = await _userRepository.GetUserByEmailAsync(email);
 
-            if (user == null) throw new AuthenticationException("Username or password is incorrect.");
-            if (!BC.Verify(password, user.Password)) throw new AuthenticationException("Username or password is incorrect.");
+            if (user == null) throw new AuthenticationException("Email or password is incorrect.");
+            if (!BC.Verify(password, user.Password)) throw new AuthenticationException("Email or password is incorrect.");
 
             string token = _tokenService.GenerateToken(user);
 

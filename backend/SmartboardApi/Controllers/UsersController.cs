@@ -95,7 +95,7 @@ public class UsersController : ControllerBase
     {
         try
         {
-            AuthenticationResponse authResponse = await _userService.AuthenticateUser(dto.Username, dto.Password);
+            AuthenticationResponse authResponse = await _userService.AuthenticateUser(dto.Email, dto.Password);
 
             Response.Cookies.Append("loggedInUser", authResponse.Token, new CookieOptions
             {
