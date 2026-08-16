@@ -8,14 +8,17 @@ import HomePage from './Pages/Homepage/index.tsx'
 import LoginPage from './Pages/Loginpage/index.tsx'
 import NotFoundPage from './Pages/NotFoundPage/index.tsx'
 import SignupPage from './Pages/SignupPage/SignupPage.tsx'
+import { RequireAuth } from './components/context/RequireAuth.tsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route path='/' element={<HomePage />} />
       <Route path='/login' element={<LoginPage />} />
       <Route path='/signup' element={<SignupPage />} />
-      <Route path='*' element={<NotFoundPage />} />
+      <Route element={<RequireAuth />}>
+        <Route path='/' element={<HomePage />} />
+        <Route path='*' element={<NotFoundPage />} />
+      </Route>
     </>
   )
 )

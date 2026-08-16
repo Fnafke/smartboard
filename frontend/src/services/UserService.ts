@@ -55,8 +55,26 @@ const authenticateUser = async (email: string, password: string) => {
     }
 }
 
+const logoutUser = async () => {
+    try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/users/logout`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        });
+
+        return response;
+    } catch (error) {
+        console.error("Error logging out user:", error);
+        throw error;
+    }
+}
+
 export const UserService = {
     fetchCurrentUser,
     authenticateUser,
-    signupUser
+    signupUser,
+    logoutUser
 };
