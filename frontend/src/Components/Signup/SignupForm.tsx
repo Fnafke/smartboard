@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/input"
 import { Link, useNavigate } from "react-router-dom"
 import { UserService } from "@/services/UserService"
 
-const LoginForm = () => {
+const SignupForm = () => {
+    const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [emailError, setEmailError] = useState("")
     const [passwordError, setPasswordError] = useState("")
+    const [usernameError, setUsernameError] = useState("")
     const [authenticationError, setAuthenticationError] = useState("")
 
     const navigate = useNavigate();
@@ -19,6 +21,12 @@ const LoginForm = () => {
         let isValid = true;
         setEmailError("");
         setPasswordError("");
+        setUsernameError("");
+
+        if (!username) {
+            setUsernameError("Please enter a username.");
+            isValid = false;
+        }
 
         if (!email || !/\S+@\S+\.\S+/.test(email)) {
         setEmailError("Please enter a valid email address.");
@@ -39,10 +47,10 @@ const LoginForm = () => {
 
         if (!validateCredentials()) return;
 
-        const response = await UserService.authenticateUser(email, password);
+        const response = await UserService.signupUser(username, email, password);
 
         if (!response.ok) {
-            setAuthenticationError("Invalid email or password.");
+            setAuthenticationError("Failed to create account.");
             return;
         }
         
@@ -56,11 +64,26 @@ const LoginForm = () => {
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                 <LockKeyhole className="h-5 w-5" />
             </div>
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground">Welcome back</h1>
-            <p className="mt-2 text-sm text-muted-foreground">Sign in to continue to Smartboard</p>
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">Create an account</h1>
+            <p className="mt-2 text-sm text-muted-foreground">Sign up to get started with Smartboard</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-2">
+                <label htmlFor="username" className="text-sm font-medium text-foreground">
+                Username
+                </label>
+                <div className="relative">
+                <Input
+                    id="username"
+                    type="text"
+                    value={username}
+                    onChange={(event) => setUsername(event.target.value)}
+                    placeholder="Enter your username"
+                    className="h-11 pl-9"
+                />
+                </div>
+            </div>
             <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium text-foreground">
                 Email
@@ -84,9 +107,6 @@ const LoginForm = () => {
                 <label htmlFor="password" className="text-sm font-medium text-foreground">
                     Password
                 </label>
-                {/* <a href="#" className="text-xs font-medium text-primary underline-offset-4 hover:underline">
-                    Forgot password?
-                </a> */}
                 </div>
                 <Input
                 id="password"
@@ -111,18 +131,19 @@ const LoginForm = () => {
             </div> */}
 
             <Button type="submit" className="h-11 w-full rounded-2xl text-sm font-medium">
-                Sign in
+                Sign up
             </Button>
 
+            {usernameError && <p className="text-sm text-red-500">{usernameError}</p>}
             {emailError && <p className="text-sm text-red-500">{emailError}</p>}
             {passwordError && <p className="text-sm text-red-500">{passwordError}</p>}
             {authenticationError && <p className="text-sm text-red-500">{authenticationError}</p>}
             </form>
 
             <p className="mt-6 text-center text-sm text-muted-foreground">
-            Don&apos;t have an account?{' '}
-            <Link to="/signup" className="font-medium text-primary underline-offset-4 hover:underline">
-                Create one here
+            Already have an account?{' '}
+            <Link to="/login" className="font-medium text-primary underline-offset-4 hover:underline">
+                Sign in here
             </Link>
             </p>
         </div>
@@ -130,4 +151,4 @@ const LoginForm = () => {
     )
 }
 
-export default LoginForm;
+export default SignupForm;
