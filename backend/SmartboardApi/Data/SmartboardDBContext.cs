@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using SmartboardApi.Models;
-using SmartboardApi.Models.ProjectModule;
+using SmartboardApi.Modules.AuthModule.Models;
+using SmartboardApi.Modules.ProjectModule.Models;
 using System.Reflection.Metadata;
 
 namespace SmartboardApi.Data;

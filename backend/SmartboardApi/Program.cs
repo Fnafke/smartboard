@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SmartboardApi.Data;
-using SmartboardApi.Repositories.ProjectModule.ProjectRepository;
-using SmartboardApi.Repositories.UserRepository;
-using SmartboardApi.Services.ProjectModule;
-using SmartboardApi.Services.TokenService;
-using SmartboardApi.Services.UserService;
+using SmartboardApi.Modules.AuthModule.Repositories.UserRepository;
+using SmartboardApi.Modules.AuthModule.Services.TokenService;
+using SmartboardApi.Modules.AuthModule.Services.UserService;
+using SmartboardApi.Modules.ProjectModule.Repositories.ProjectRepository;
+using SmartboardApi.Modules.ProjectModule.Services.ProjectService;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
