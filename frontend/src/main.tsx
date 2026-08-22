@@ -10,6 +10,9 @@ import NotFoundPage from './Pages/NotFoundPage/index.tsx'
 import SignupPage from './Pages/SignupPage/SignupPage.tsx'
 import { RequireAuth } from './components/context/RequireAuth.tsx'
 import ProjectsPage from './Pages/ProjectsPage/index.tsx'
+import { Sidebar } from 'lucide-react'
+import { SidebarProvider } from './components/ui/sidebar.tsx'
+import { TooltipProvider } from './components/ui/tooltip.tsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -26,11 +29,15 @@ const router = createBrowserRouter(
 )
 
 createRoot(document.getElementById('root')!).render(
-  <AuthProvider>
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-          <StrictMode>
-            <RouterProvider router={router} />
-          </StrictMode>
-    </ThemeProvider>
-  </AuthProvider>
+  <SidebarProvider>
+    <TooltipProvider>
+      <AuthProvider>
+        <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+              <StrictMode>
+                <RouterProvider router={router} />
+              </StrictMode>
+        </ThemeProvider>
+      </AuthProvider>
+    </TooltipProvider>
+  </SidebarProvider>
 )

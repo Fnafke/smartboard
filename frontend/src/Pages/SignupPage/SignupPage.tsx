@@ -4,7 +4,9 @@ const SignupPage = () => {
     return (
         <>
             <title>Smartboard - Signup</title>
-            <SignupForm />
+            <div className="m-auto w-1/2">
+                <SignupForm />
+            </div>
         </>
     )
 }
