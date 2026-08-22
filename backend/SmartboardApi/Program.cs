@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SmartboardApi.Data;
+using SmartboardApi.Repositories.ProjectModule.ProjectRepository;
 using SmartboardApi.Repositories.UserRepository;
+using SmartboardApi.Services.ProjectModule;
 using SmartboardApi.Services.TokenService;
 using SmartboardApi.Services.UserService;
 using System.Text;
@@ -19,8 +21,10 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<SmartboardDBContext>(options => options.UseNpgsql(connectionString));
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 
 const string AllowedOriginsPolicy = "AllowedOrigins";
 var allowedOrigins = builder.Configuration
