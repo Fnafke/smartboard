@@ -44,6 +44,18 @@ namespace SmartboardApi.Services.UserService
             return user;
         }
 
+        public async Task<User> GetUserByUsernameAsync(string username)
+        {
+            User? user = await _userRepository.GetUserByUsernameAsync(username);
+
+            if (user == null)
+            {
+                throw new InvalidOperationException("A user with this username does not exist");
+            }
+
+            return user;
+        }
+
         public async Task<User> CreateUserAsync(string username, string email, string password)
         {
             if (string.IsNullOrEmpty(username)) throw new ArgumentNullException("Username should not be empty");

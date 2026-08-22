@@ -8,6 +8,7 @@ namespace SmartboardApi.Services.UserService
         Task<Boolean> UserExistsByEmailAsync(string email);
         Task<Boolean> UserExistsByUsernameAsync(string username);
         Task<User> GetUserByIdAsync(Guid id);
+        Task<User> GetUserByUsernameAsync(string username);
         Task<User> CreateUserAsync(string username, string email, string password);
         Task<AuthenticationResponse> AuthenticateUser(string username, string password);
     }

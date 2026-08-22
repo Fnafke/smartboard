@@ -1,3 +1,4 @@
+using SmartboardApi.Models.ProjectModule;
 using System.ComponentModel.DataAnnotations;
 
 namespace SmartboardApi.Models;
@@ -17,6 +18,8 @@ public class User
     public string Password { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public ICollection<Project> Projects { get; }
 
     public User(string username, string email, string password)
     {
