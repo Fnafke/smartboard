@@ -14,6 +14,8 @@ public class Project
     [Required, MaxLength(255)]
     public string Description { get; set; }
 
+    public ProjectStatus Status { get; set; } = ProjectStatus.Active;
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public Guid UserId { get; set; }
