@@ -2,7 +2,10 @@ import LoginForm from "@/components/Login/LoginForm";
 
 const LoginPage = () => {
     return (
-        <LoginForm/>
+        <>
+            <title>Smartboard - Login</title>
+            <LoginForm/>
+        </>
     )
 }
 

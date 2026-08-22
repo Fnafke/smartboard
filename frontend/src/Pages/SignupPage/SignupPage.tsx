@@ -2,7 +2,10 @@ import SignupForm from "@/components/Signup/SignupForm"
 
 const SignupPage = () => {
     return (
-        <SignupForm />
+        <>
+            <title>Smartboard - Signup</title>
+            <SignupForm />
+        </>
     )
 }
 
